@@ -1,7 +1,8 @@
 @use '../' as *;
 
 @mixin button-base($radius: 4px, $f-size: 14px, $padd: 1rem) {
-    border: none;
+    // border: none; // this has been removed to support border colors on focus
+    border: 2px solid;
     border-radius: $radius;
     cursor: pointer;
     display: inline-block;
@@ -15,16 +16,19 @@
     }
 }
 @mixin button-common-states(
-        $color: #8a8a8a,
-        $hover-color: $color,
-        $bg-color: #e6e6e6,
-        $bg-change: "shade",
-        $intesity: 15%
-    ){
+    $color: #8a8a8a,
+    $hover-color: $color,
+    $bg-color: #e6e6e6,
+    $bg-change: "",
+    $intesity: 15%,
+    $bg-hover: "",
+    $focus-border-color: ""
+){
     &, &:link, &:visited {
         color: $color;
         background-color: $bg-color;
-        transition: color 0.2s linear, background-color 0.2s linear;
+        border-color: $bg-color;
+        transition: color 0.2s linear, background-color 0.2s linear, border-color 0.2s linear;
         svg {
             fill: $color;
             transition: fill 0.2s linear,
@@ -32,14 +36,23 @@
     }
     &:hover, &:active {
         color: $hover-color;
-        svg {
-            fill: $hover-color;
+        @if $bg-hover != "" {
+            background-color: $bg-hover;
+            border-color: $bg-hover;
         }
         @if $bg-change == "shade" {
             background-color: mix(#000, $bg-color, $intesity);
         }
         @if $bg-change == "tint" {
             background-color: mix(#FFF, $bg-color, $intesity);
+        }
+        svg {
+            fill: $hover-color;
+        }
+    }
+    &:focus {
+        @if $focus-border-color != "" {
+            border-color: $focus-border-color;
         }
     }
     &:disabled {
@@ -48,19 +61,21 @@
     }
 }
 @mixin button-sml(
-        $f-size: 14px,
-        $l-height: 1,
-        $padding: .5rem
-    ) {
+    $f-size: 14px,
+    $l-height: 1,
+    $padding: .5rem
+) {
     font-size: $f-size;
     line-height: $l-height;
     padding: $padding;
 }
 @mixin button-hollow-states(
-        $color: #767676,
-        $hover-color: #8a8a8a,
-        $bg-change: "tint"
-    ){
+    $color: #767676,
+    $hover-color: #8a8a8a,
+    $bg-change: "",
+    $bg-hover: "",
+    $focus-border-color: ""
+){
     &, &:link, &:visited {
         border-color: $color;
         color: $color;
@@ -76,12 +91,21 @@
         svg {
             fill: $hover-color;
         }
-
         @if $bg-change == "tint" {
             background-color: mix(#000, $color, 15%);
         }
         @if $bg-change == "shade" {
             background-color: mix(#fff, $color, 85%);
+        }
+        @if $bg-hover {
+            background-color: $bg-hover;
+            border-color: $bg-hover;
+        }
+    }
+    &:focus {
+        background-color: transparent;
+        @if $focus-border-color != "" {
+            border-color: $focus-border-color;
         }
     }
     &:disabled {
